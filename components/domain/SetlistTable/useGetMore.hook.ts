@@ -64,5 +64,5 @@ export const useGetMore = ({ loadFirst = 10, loadOnce = 5 }: HookArgs) => {
     loading,
     loadMoreFn,
     error,
-  }
+  } as const
 }
