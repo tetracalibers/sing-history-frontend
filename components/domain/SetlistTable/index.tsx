@@ -2,7 +2,7 @@ import { Song } from "./Song"
 import { useGetMore } from "./useGetMore.hook"
 import styled from "styled-components"
 import { useVirtualScroll } from "./useVirtualScroll.hook"
-import { memo, useMemo } from "react"
+import { memo } from "react"
 
 const _VirtualRoot = styled.div`
   --bg-color: #f7f9ff;
@@ -80,20 +80,13 @@ const vAreaHeight = 192
 const vItemHeight = 56
 
 const _SetlistTable = () => {
-  const { newNodes, error, loadMoreFn, staticNodes } = useGetMore({})
-
-  const items = useMemo(
-    () => staticNodes.concat(newNodes),
-    [staticNodes, newNodes],
-  )
+  const { nodes, loadMoreFn } = useGetMore({})
 
   const { renderItems, updateRenderItem, ulStyle } = useVirtualScroll({
-    items,
+    items: nodes,
     vAreaHeight,
     vItemHeight,
   })
-
-  if (error) return <p>Error: {JSON.stringify(error)}</p>
 
   return (
     <>

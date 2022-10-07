@@ -13,13 +13,6 @@ const MORE_SETLIST_QUERY = gql`
           songName
         }
       }
-      static @client {
-        node {
-          id
-          artistName
-          songName
-        }
-      }
       pageInfo {
         hasNextPage
         endCursor
@@ -47,8 +40,7 @@ export const useGetMore = ({ loadFirst = 10, loadOnce = 5 }: HookArgs) => {
       },
     },
   )
-  const [staticNodes, setStaticNodes] = useState<Setlist[]>([])
-  const [newNodes, setNewNodes] = useState<Setlist[]>([])
+  const [nodes, setNodes] = useState<Setlist[]>([])
 
   const loadMoreFn = useCallback(async () => {
     if (data) {
@@ -59,17 +51,16 @@ export const useGetMore = ({ loadFirst = 10, loadOnce = 5 }: HookArgs) => {
 
   useMemo(() => {
     if (data) {
-      const { static: staticEdges, edges } = data.setlistPerPage
-      setStaticNodes(staticEdges?.map(edge => edge.node) ?? [])
-      setNewNodes(edges.map(edge => edge.node))
-      const count = (staticEdges?.length ?? 0) + edges.length
-      router.push({ query: { count } }, undefined, { scroll: false })
+      const { edges } = data.setlistPerPage
+      setNodes(edges.map(edge => edge.node))
+      router.push({ query: { count: edges.length } }, undefined, {
+        scroll: false,
+      })
     }
   }, [data])
 
   return {
-    staticNodes,
-    newNodes,
+    nodes,
     loading,
     loadMoreFn,
     error,
