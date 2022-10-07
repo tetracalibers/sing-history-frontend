@@ -14,10 +14,15 @@ const cache = new InMemoryCache({
           // fetchMoreで取得したデータと取得済みのデータをマージ
           // https://www.apollographql.com/docs/react/pagination/core-api/
           merge(existing: Page<Setlist>, incoming: Page<Setlist>) {
+            const edges = incoming?.edges ?? []
+            const staticEdges = [
+              ...(existing?.static ?? []),
+              ...(existing?.edges ?? []),
+            ]
             return {
               ...(incoming ?? {}),
-              edges: incoming?.edges ?? [],
-              static: [...(existing?.static ?? []), ...(existing?.edges ?? [])],
+              edges,
+              static: staticEdges,
             }
           },
         },
