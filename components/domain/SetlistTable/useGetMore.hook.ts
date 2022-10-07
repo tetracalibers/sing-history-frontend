@@ -63,7 +63,7 @@ export const useGetMore = ({ loadFirst = 10, loadOnce = 5 }: HookArgs) => {
       setStaticNodes(staticEdges?.map(edge => edge.node) ?? [])
       setNewNodes(edges.map(edge => edge.node))
       const count = (staticEdges?.length ?? 0) + edges.length
-      router.push({ query: { count } })
+      router.push({ query: { count } }, undefined, { scroll: false })
     }
   }, [data])
 
