@@ -7,9 +7,9 @@ type Props = {
 
 const _Song = ({ song }: Props) => {
   return (
-    <li>
+    <>
       {song.artistName} : {song.songName}
-    </li>
+    </>
   )
 }
 
