@@ -12,6 +12,7 @@ export type PageInfo = {
 
 export type Page<T> = {
   edges: Edge<T>[]
+  static?: Edge<T>[]
   pageInfo: PageInfo
   totalCount: number
 }

@@ -1,11 +1,18 @@
 import { gql, useQuery } from "@apollo/client"
-import { useCallback, useMemo } from "react"
-import { SetlistPerPage } from "../../../types/setlist"
+import { useCallback, useMemo, useState } from "react"
+import { Setlist, SetlistPerPage } from "../../../types/setlist"
 
 const MORE_SETLIST_QUERY = gql`
   query MoreSetList($loadOnce: Int, $cursor: String) {
     setlistPerPage(first: $loadOnce, after: $cursor) {
       edges {
+        node {
+          id
+          artistName
+          songName
+        }
+      }
+      static @client {
         node {
           id
           artistName
@@ -31,6 +38,8 @@ export const useGetMore = ({ loadFirst = 10, loadOnce = 5 }: HookArgs) => {
     MORE_SETLIST_QUERY,
     { variables: { loadOnce: loadFirst } },
   )
+  const [staticNodes, setStaticNodes] = useState<Setlist[]>([])
+  const [newNodes, setNewNodes] = useState<Setlist[]>([])
 
   const loadMoreFn = useCallback(async () => {
     if (data) {
@@ -41,12 +50,17 @@ export const useGetMore = ({ loadFirst = 10, loadOnce = 5 }: HookArgs) => {
     }
   }, [data, fetchMore])
 
-  const nodes = useMemo(() => {
-    return data?.setlistPerPage?.edges?.map(edge => edge.node) ?? []
+  useMemo(() => {
+    if (data) {
+      const { setlistPerPage } = data
+      setStaticNodes(setlistPerPage.static?.map(edge => edge.node) ?? [])
+      setNewNodes(setlistPerPage.edges.map(edge => edge.node))
+    }
   }, [data])
 
   return {
-    nodes,
+    staticNodes,
+    newNodes,
     loading,
     loadMoreFn,
     error,

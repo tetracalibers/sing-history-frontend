@@ -16,7 +16,8 @@ const cache = new InMemoryCache({
           merge(existing: Page<Setlist>, incoming: Page<Setlist>) {
             return {
               ...(incoming ?? {}),
-              edges: [...(existing?.edges ?? []), ...(incoming?.edges ?? [])],
+              edges: incoming?.edges ?? [],
+              static: [...(existing?.static ?? []), ...(existing?.edges ?? [])],
             }
           },
         },
