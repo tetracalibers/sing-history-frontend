@@ -1,5 +1,6 @@
 import type { NextPage } from "next"
 import { gql, useQuery } from "@apollo/client"
+import { SetlistTable } from "../components/domain/SetlistTable"
 
 const SETLIST_QUERY = gql`
   query {
@@ -22,22 +23,7 @@ type SetlistResponse = {
 }
 
 const Home: NextPage = () => {
-  const { loading, error, data } = useQuery<SetlistResponse>(SETLIST_QUERY)
-
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error: {JSON.stringify(error)}</p>
-
-  if (!data?.setlist) return null
-
-  return (
-    <ul>
-      {data?.setlist.map(song => (
-        <li key={song.id}>
-          {song.artistName}: {song.songName}
-        </li>
-      ))}
-    </ul>
-  )
+  return <SetlistTable />
 }
 
 export default Home
