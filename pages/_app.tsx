@@ -4,7 +4,7 @@ import type { AppProps } from "next/app"
 
 const cache = new InMemoryCache()
 const client = new ApolloClient({
-  uri: `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphiql`,
+  uri: `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
   cache,
 })
 
