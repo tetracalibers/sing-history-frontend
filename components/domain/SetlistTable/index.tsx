@@ -2,6 +2,7 @@ import styled from "styled-components"
 import { useVirtualScroll } from "./useVirtualScroll.hook"
 import { memo, useRef } from "react"
 import { useWindowSize } from "../../../hooks/useWindowSize.hook"
+import { Song } from "./Song"
 
 const _TwinkleBack = styled.div`
   width: 100vw;
@@ -21,6 +22,7 @@ const _VirtualRoot = styled.div`
 
   /* メニューをスクロール可能にする */
   overflow-y: auto;
+  overflow-x: hidden;
   /* iOSで慣性スクロールができるようにする */
   -webkit-overflow-scrolling: touch;
 
@@ -53,6 +55,7 @@ const _VirtualRoot = styled.div`
 
 const _VirtualScrollArea = styled.table`
   height: fit-content;
+  width: 100vw;
   font-family: "Klee One", cursive;
 `
 
@@ -63,8 +66,10 @@ const _Tr = styled.tr`
   padding: 1em;
   border-radius: 2rem;
   border: none;
-  overflow: hidden;
   border-bottom: 0.5px dashed #f6f0ea80;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 const Tr = memo(_Tr)
 
@@ -80,7 +85,7 @@ const _SetlistTable = () => {
 
   const { renderItems, ulStyle } = useVirtualScroll({
     vAreaHeight: wHeight,
-    vItemHeight: 54,
+    vItemHeight: 162.5,
     rootRef,
   })
 
@@ -90,10 +95,11 @@ const _SetlistTable = () => {
         <VirtualScrollArea>
           <tbody style={ulStyle}>
             {renderItems.map(node => (
-              <Tr key={node.id}>
+              <Tr key={node.id} style={{ height: 162.5 }}>
                 <Td>{node.id}</Td>
-                <Td>{node.artistName}</Td>
-                <Td>{node.songName}</Td>
+                <Td>
+                  <Song song={node} />
+                </Td>
               </Tr>
             ))}
           </tbody>

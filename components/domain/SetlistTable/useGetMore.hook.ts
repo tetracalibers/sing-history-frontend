@@ -11,6 +11,7 @@ const MORE_SETLIST_QUERY = gql`
           id
           artistName
           songName
+          jacketUrl
         }
       }
       pageInfo {
