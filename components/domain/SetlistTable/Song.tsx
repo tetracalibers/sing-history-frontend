@@ -8,7 +8,7 @@ type Props = {
 const _Song = ({ song }: Props) => {
   return (
     <>
-      {song.artistName} : {song.songName}
+      {song.id} : {song.songName}
     </>
   )
 }

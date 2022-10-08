@@ -2,7 +2,7 @@ import { Song } from "./Song"
 import { useGetMore } from "./useGetMore.hook"
 import styled from "styled-components"
 import { useVirtualScroll } from "./useVirtualScroll.hook"
-import { memo } from "react"
+import { memo, useRef } from "react"
 
 const _VirtualRoot = styled.div`
   --bg-color: #f7f9ff;
@@ -11,7 +11,6 @@ const _VirtualRoot = styled.div`
   --gap: 1rem;
 
   /* メニューをスクロール可能にする */
-  max-height: 12em;
   overflow-y: auto;
   /* iOSで慣性スクロールができるようにする */
   -webkit-overflow-scrolling: touch;
@@ -76,35 +75,30 @@ const VirtualScrollArea = memo(_VirtualScrollArea)
 const VirtualRoot = memo(_VirtualRoot)
 const Ul = memo(_Ul)
 
-const vAreaHeight = 192
+const vAreaHeight = 500
 const vItemHeight = 56
 
 const _SetlistTable = () => {
-  const { nodes, loadMoreFn } = useGetMore({})
+  const rootRef = useRef<HTMLDivElement>(null)
 
-  const { renderItems, updateRenderItem, ulStyle } = useVirtualScroll({
-    items: nodes,
+  const { renderItems, ulStyle } = useVirtualScroll({
     vAreaHeight,
     vItemHeight,
+    rootRef,
   })
 
   return (
-    <>
-      <VirtualRoot onScroll={updateRenderItem}>
-        <VirtualScrollArea>
-          <Ul style={ulStyle}>
-            {renderItems.map(node => (
-              <li style={{ height: vItemHeight }} key={node.id}>
-                <Song song={node} />
-              </li>
-            ))}
-          </Ul>
-        </VirtualScrollArea>
-      </VirtualRoot>
-      <button type="button" onClick={loadMoreFn}>
-        more
-      </button>
-    </>
+    <VirtualRoot ref={rootRef} style={{ maxHeight: vAreaHeight }}>
+      <VirtualScrollArea>
+        <Ul style={ulStyle}>
+          {renderItems.map(node => (
+            <li style={{ height: vItemHeight }} key={node.id}>
+              <Song song={node} />
+            </li>
+          ))}
+        </Ul>
+      </VirtualScrollArea>
+    </VirtualRoot>
   )
 }
 
