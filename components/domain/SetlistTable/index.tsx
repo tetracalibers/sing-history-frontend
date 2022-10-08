@@ -53,6 +53,7 @@ const _VirtualRoot = styled.div`
 
 const _VirtualScrollArea = styled.table`
   height: fit-content;
+  font-family: "Klee One", cursive;
 `
 
 const VirtualScrollArea = memo(_VirtualScrollArea)
