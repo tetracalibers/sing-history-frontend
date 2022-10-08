@@ -48,9 +48,7 @@ export const useVirtualScroll = <R extends HTMLElement>({
       })),
       tap(pos => setStartIdx(Math.floor(pos.sT / vItemHeight))),
       filter(
-        pos =>
-          pos.sH >=
-          vItemHeight * Math.floor(vAreaHeight / vItemHeight) + pos.sT,
+        pos => pos.sH >= vItemHeight * Math.floor(vAreaHeight / vItemHeight),
       ),
       debounceTime(200),
       distinct(),
