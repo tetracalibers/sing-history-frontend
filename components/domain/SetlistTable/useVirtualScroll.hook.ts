@@ -34,7 +34,10 @@ export const useVirtualScroll = <R extends HTMLElement>({
   )
   const [startIdx, setStartIdx] = useState(0)
 
-  const { nodes, loadMoreFn } = useGetMore({ loadOnce: LOAD_ONCE })
+  const { nodes, loadMoreFn } = useGetMore({
+    loadOnce: LOAD_ONCE,
+    loadFirst: Math.ceil(vAreaHeight / vItemHeight),
+  })
 
   const onScrollFetch$ = useObservedValue(loadMoreFn)
 

@@ -1,8 +1,8 @@
 import { Song } from "./Song"
-import { useGetMore } from "./useGetMore.hook"
 import styled from "styled-components"
 import { useVirtualScroll } from "./useVirtualScroll.hook"
 import { memo, useRef } from "react"
+import { useWindowSize } from "../../../hooks/useWindowSize.hook"
 
 const _VirtualRoot = styled.div`
   --bg-color: #f7f9ff;
@@ -75,20 +75,20 @@ const VirtualScrollArea = memo(_VirtualScrollArea)
 const VirtualRoot = memo(_VirtualRoot)
 const Ul = memo(_Ul)
 
-const vAreaHeight = 500
 const vItemHeight = 56
 
 const _SetlistTable = () => {
   const rootRef = useRef<HTMLDivElement>(null)
+  const [, wHeight] = useWindowSize()
 
   const { renderItems, ulStyle } = useVirtualScroll({
-    vAreaHeight,
+    vAreaHeight: wHeight,
     vItemHeight,
     rootRef,
   })
 
   return (
-    <VirtualRoot ref={rootRef} style={{ maxHeight: vAreaHeight }}>
+    <VirtualRoot ref={rootRef} style={{ maxHeight: wHeight }}>
       <VirtualScrollArea>
         <Ul style={ulStyle}>
           {renderItems.map(node => (
