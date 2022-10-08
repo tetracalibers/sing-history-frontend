@@ -1,4 +1,3 @@
-import { Song } from "./Song"
 import styled from "styled-components"
 import { useVirtualScroll } from "./useVirtualScroll.hook"
 import { memo, useRef } from "react"
@@ -49,22 +48,30 @@ const _VirtualRoot = styled.div`
     rgba(12, 186, 186, 0.9) 0%,
     rgba(100, 125, 238, 0.9) 74%
   );
+  color: #f5f5f5;
 `
 
-const _VirtualScrollArea = styled.div`
+const _VirtualScrollArea = styled.table`
   height: fit-content;
-`
-
-const _Ul = styled.ul`
-  padding: 0;
-  margin: 0;
 `
 
 const VirtualScrollArea = memo(_VirtualScrollArea)
 const VirtualRoot = memo(_VirtualRoot)
-const Ul = memo(_Ul)
 
-const vItemHeight = 56
+const _Tr = styled.tr`
+  padding: 1em;
+  border-radius: 2rem;
+  border: none;
+  overflow: hidden;
+  border-bottom: 0.5px dashed #f6f0ea80;
+`
+const Tr = memo(_Tr)
+
+const _Td = styled.td`
+  text-align: center;
+  padding: 15px 5px;
+`
+const Td = memo(_Td)
 
 const _SetlistTable = () => {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -72,7 +79,7 @@ const _SetlistTable = () => {
 
   const { renderItems, ulStyle } = useVirtualScroll({
     vAreaHeight: wHeight,
-    vItemHeight,
+    vItemHeight: 54,
     rootRef,
   })
 
@@ -80,13 +87,15 @@ const _SetlistTable = () => {
     <TwinkleBack>
       <VirtualRoot ref={rootRef} style={{ maxHeight: wHeight }}>
         <VirtualScrollArea>
-          <Ul style={ulStyle}>
+          <tbody style={ulStyle}>
             {renderItems.map(node => (
-              <li style={{ height: vItemHeight }} key={node.id}>
-                <Song song={node} />
-              </li>
+              <Tr key={node.id}>
+                <Td>{node.id}</Td>
+                <Td>{node.artistName}</Td>
+                <Td>{node.songName}</Td>
+              </Tr>
             ))}
-          </Ul>
+          </tbody>
         </VirtualScrollArea>
       </VirtualRoot>
     </TwinkleBack>

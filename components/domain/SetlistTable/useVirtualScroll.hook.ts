@@ -29,8 +29,9 @@ export const useVirtualScroll = <R extends HTMLElement>({
   vItemHeight,
   vAreaHeight,
 }: HookArgs<R>) => {
-  const renderItemsMax = Math.floor(
-    vAreaHeight / vItemHeight + RESERVE_ITEM_COUNT,
+  const renderItemsMax = useMemo(
+    () => Math.floor(vAreaHeight / vItemHeight + RESERVE_ITEM_COUNT),
+    [vAreaHeight, vItemHeight],
   )
   const [startIdx, setStartIdx] = useState(0)
 
