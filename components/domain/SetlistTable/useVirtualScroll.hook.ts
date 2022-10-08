@@ -2,12 +2,14 @@ import { RefObject, useEffect, useMemo, useState } from "react"
 import {
   fromEvent,
   map,
-  pairwise,
   filter,
   tap,
   exhaustMap,
   combineLatestWith,
   throttleTime,
+  debounceTime,
+  distinct,
+  merge,
 } from "rxjs"
 import { useGetMore } from "./useGetMore.hook"
 import { useObservedValue } from "./useObservedValue.hook"
@@ -19,27 +21,7 @@ type HookArgs<R extends HTMLElement> = {
 }
 
 const RESERVE_ITEM_COUNT = 3
-
-type ScrollPos = {
-  sT: number
-  sH: number
-  cH: number
-}
-
-/**
-    check if the user is scrolling down by 
-    previous scroll position and current scroll position
-**/
-const isUserScrollingDown = (positions: [ScrollPos, ScrollPos]) => {
-  return positions[0].sT < positions[1].sT
-}
-
-/** Check if the scroll position at required
-    percentage relative to the container 
-**/
-const isScrollExpectedPercent = (position: ScrollPos, percent: number) => {
-  return (position.sT + position.cH) / position.sH > percent / 100
-}
+const LOAD_ONCE = 5
 
 export const useVirtualScroll = <R extends HTMLElement>({
   rootRef,
@@ -51,37 +33,47 @@ export const useVirtualScroll = <R extends HTMLElement>({
   )
   const [startIdx, setStartIdx] = useState(0)
 
-  const { nodes, loadMoreFn } = useGetMore({})
+  const { nodes, loadMoreFn } = useGetMore({ loadOnce: LOAD_ONCE })
 
   const onScrollFetch$ = useObservedValue(loadMoreFn)
 
   useEffect(() => {
-    const scrollEvent$ = fromEvent(rootRef?.current!, "scroll")
-
-    const userScrolledDown$ = scrollEvent$.pipe(
+    const pageByScroll$ = fromEvent(rootRef?.current!, "scroll").pipe(
       map(e => e.target as HTMLElement),
       map(el => ({
         sH: el.scrollHeight,
         sT: el.scrollTop,
         cH: el.clientHeight,
       })),
-      pairwise(),
-      tap(pos => {
-        const top = pos[1].sT
-        setStartIdx(Math.floor(top / vItemHeight))
-      }),
-      filter(positions => {
-        return (
-          isUserScrollingDown(positions) &&
-          isScrollExpectedPercent(positions[1], 99)
-        )
-      }),
-      combineLatestWith(onScrollFetch$),
-      throttleTime(150),
-      exhaustMap(([, fn]) => fn()),
+      tap(pos => setStartIdx(Math.floor(pos.sT / vItemHeight))),
+      filter(pos => window.screenY >= pos.cH - window.innerHeight),
+      debounceTime(200),
+      distinct(),
+      map(pos => Math.ceil((pos.sT + pos.cH) / (vItemHeight * LOAD_ONCE))),
     )
 
-    const ssc$ = userScrolledDown$.subscribe()
+    const pageByResize$ = fromEvent(window, "resize").pipe(
+      debounceTime(200),
+      map(_ =>
+        Math.ceil(
+          (window.innerHeight + document.body.scrollTop) /
+            (vItemHeight * LOAD_ONCE),
+        ),
+      ),
+    )
+
+    const pageToLoad$ = merge(pageByScroll$, pageByResize$).pipe(
+      distinct(),
+      filter(page => page > 1),
+    )
+
+    const ssc$ = pageToLoad$
+      .pipe(
+        combineLatestWith(onScrollFetch$),
+        throttleTime(150),
+        exhaustMap(([, fn]) => fn()),
+      )
+      .subscribe()
 
     return () => ssc$.unsubscribe()
   }, [])
