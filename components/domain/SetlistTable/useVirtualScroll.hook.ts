@@ -10,6 +10,7 @@ import {
   debounceTime,
   distinct,
   merge,
+  BehaviorSubject,
 } from "rxjs"
 import { useGetMore } from "./useGetMore.hook"
 import { useObservedValue } from "./useObservedValue.hook"
@@ -62,7 +63,9 @@ export const useVirtualScroll = <R extends HTMLElement>({
       ),
     )
 
-    const pageToLoad$ = merge(pageByScroll$, pageByResize$).pipe(
+    const pageByManual$ = new BehaviorSubject(1)
+
+    const pageToLoad$ = merge(pageByManual$, pageByScroll$, pageByResize$).pipe(
       distinct(),
       filter(page => page > 1),
     )
