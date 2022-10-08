@@ -16,7 +16,6 @@ const _Card = styled.div`
   justify-items: center;
   width: 40vw;
   box-shadow: rgb(17 12 46 / 15%) 0px 48px 100px 0px;
-  cursor: pointer;
 `
 const Card = memo(_Card)
 
