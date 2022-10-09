@@ -3,6 +3,7 @@ import { useVirtualScroll } from "./useVirtualScroll.hook"
 import { memo, useRef } from "react"
 import { useWindowSize } from "../../../hooks/useWindowSize.hook"
 import { Song } from "./Song"
+import { SingKey } from "../../molecules/SingKey"
 
 const _TwinkleBack = styled.div`
   width: 100vw;
@@ -98,7 +99,14 @@ const _SetlistTable = () => {
               <Tr key={node.id} style={{ height: 162.5 }}>
                 <Td>{node.id}</Td>
                 <Td>
-                  <Song song={node} />
+                  <Song
+                    artistName={node.artistName}
+                    songName={node.songName}
+                    jacketUrl={node.jacketUrl}
+                  />
+                </Td>
+                <Td>
+                  <SingKey keyValue={node.singKey} />
                 </Td>
               </Tr>
             ))}

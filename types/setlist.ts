@@ -5,6 +5,7 @@ export type Setlist = {
   songName: string
   id: string
   jacketUrl: string
+  singKey: number
 }
 
 export type SetlistPerPage = {

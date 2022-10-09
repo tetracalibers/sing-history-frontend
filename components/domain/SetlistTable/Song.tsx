@@ -50,26 +50,24 @@ const _SongName = styled.div`
 const SongName = memo(_SongName)
 
 type Props = {
-  song: Setlist
+  artistName: string
+  songName: string
+  jacketUrl?: string
 }
 
-const _Song = ({ song }: Props) => {
+const _Song = ({ artistName, songName, jacketUrl }: Props) => {
   return (
     <Card>
       <JacketImage
-        src={
-          song.jacketUrl
-            ? song.jacketUrl.replace("30x30", "100x100")
-            : "/noimage.jpg"
-        }
+        src={jacketUrl ? jacketUrl.replace("30x30", "100x100") : "/noimage.jpg"}
         width={100}
         height={100}
       />
       <Content>
-        <SongName>{song.songName}</SongName>
+        <SongName>{songName}</SongName>
         <ArtistName>
           <BiUserVoice aria-hidden="true" />
-          {song.artistName}
+          {artistName}
         </ArtistName>
       </Content>
     </Card>
