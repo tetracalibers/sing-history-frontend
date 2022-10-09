@@ -1,6 +1,7 @@
 import { memo } from "react"
 import styled from "styled-components"
 import { Setlist } from "../../../types/setlist"
+import { BiUserVoice } from "react-icons/bi"
 
 const _Card = styled.div`
   position: relative;
@@ -37,12 +38,14 @@ const _Content = styled.div`
 const Content = memo(_Content)
 
 const _ArtistName = styled.div`
-  font-weight: 700;
+  font-size: calc(14px * 0.8);
+  display: flex;
+  align-items: end;
 `
 const ArtistName = memo(_ArtistName)
 
 const _SongName = styled.div`
-  font-size: 0.8rem;
+  font-weight: 700;
 `
 const SongName = memo(_SongName)
 
@@ -63,8 +66,11 @@ const _Song = ({ song }: Props) => {
         height={100}
       />
       <Content>
-        <ArtistName>{song.artistName}</ArtistName>
         <SongName>{song.songName}</SongName>
+        <ArtistName>
+          <BiUserVoice aria-hidden="true" />
+          {song.artistName}
+        </ArtistName>
       </Content>
     </Card>
   )
